@@ -1,6 +1,6 @@
 module "resource_parent" {
   source         = "../Azurerm_rg_group"
-  resource_group = "rg-todoapp"
+  resource_group = "rg-todoapp2"
   location       = "canadacentral"
 }
 module "Azurerm_vnet_parent" {
@@ -8,14 +8,14 @@ module "Azurerm_vnet_parent" {
   source              = "../Azurerm_vnet"
   name                = "vnet-todoapp"
   location            = "canadacentral"
-  resource_group_name = "rg-todoapp"
+  resource_group_name = "rg-todoapp2"
   address_space       = ["10.92.0.0/16"]
 }
 module "azurerm_subnet_parent" {
   depends_on           = [module.Azurerm_vnet_parent]
   source               = "../Azurerm_subnet"
   name                 = "frontend_subnet_todoapp"
-  resource_group_name  = "rg-todoapp"
+  resource_group_name  = "rg-todoapp2"
   virtual_network_name = "vnet-todoapp"
   address_prefixes     = ["10.92.1.0/24"]
 
@@ -24,7 +24,7 @@ module "azurerm_backendsubnet_parent" {
   depends_on           = [module.Azurerm_vnet_parent]
   source               = "../Azurerm_subnet"
   name                 = "backend_subnet_todoapp"
-  resource_group_name  = "rg-todoapp"
+  resource_group_name  = "rg-todoapp2"
   virtual_network_name = "vnet-todoapp"
   address_prefixes     = ["10.92.2.0/24"]
 }
@@ -33,7 +33,7 @@ module "azurerm_frontend_vm" {
   source              = "../Azurerm_vm"
   nic_name            = "nic_frontend"
   location            = "canadacentral"
-  resource_group_name = "rg-todoapp"
+  resource_group_name = "rg-todoapp2"
   subnet1             = data.azurerm_subnet.frontend_subnet1.id
   vm_name             = "frontend-vm"
   Publisher           = "canonical"
@@ -52,7 +52,7 @@ module "azurerm_backend_vm" {
   source              = "../Azurerm_vm"
   nic_name            = "nic_backend"
   location            = "canadacentral"
-  resource_group_name = "rg-todoapp"
+  resource_group_name = "rg-todoapp2"
   subnet1             = data.azurerm_subnet.backend_subnet1.id
   vm_name             = "backend-vm"
   Publisher           = "canonical"
@@ -70,7 +70,7 @@ module "frontend_public_pip" {
   depends_on          = [module.resource_parent]
   source              = "../Azurerm_pip"
   public_ip           = "public_pip1"
-  resource_group_name = "rg-todoapp"
+  resource_group_name = "rg-todoapp2"
   location            = "canadacentral"
   allocation_method   = "Static"
 }
@@ -78,7 +78,7 @@ module "sql_server" {
   depends_on                   = [module.resource_parent]
   source                       = "../Azurerm_Sql_server"
   name                         = "sqlserver15674"
-  resource_group_name          = "rg-todoapp"
+  resource_group_name          = "rg-todoapp2"
   location                     = "canadacentral"
   sql_version                  = "12.0"
   administrator_login          = "adminstrator@12"
@@ -100,51 +100,51 @@ module "sql_database1" {
 #   source               = "../Azurerm_subnet_datablock"
 #   name                 = "frontend_subnet_todoapp"
 #   virtual_network_name = "vnet-todoapp"
-#   resource_group_name  = "rg-todoapp"
+#   resource_group_name  = "rg-todoapp2"
 # }
 # module "backend_subnet" {
 #   depends_on           = [module.azurerm_backendsubnet_parent]
 #   source               = "../Azurerm_subnet_datablock"
 #   name                 = "backend_subnet_todoapp"
 #   virtual_network_name = "vnet-todoapp"
-#   resource_group_name  = "rg-todoapp"
+#   resource_group_name  = "rg-todoapp2"
 # }
 # module "publicip98" {
 #   depends_on          = [module.frontend_public_pip]
 #   source              = "../Azurerm_publiip_datablock"
 #   publicip            = "public_pip1"
-#   resource_group_name = "rg-todoapp"
+#   resource_group_name = "rg-todoapp2"
 # }
 
 # module "server02" {
 #   depends_on          = [module.sql_server]
 #   source              = "../Azurem_server_datablock"
 #   name                = "sqlserver15674"
-#   resource_group_name = "rg-todoapp"
+#   resource_group_name = "rg-todoapp2"
 # }
 
 data "azurerm_subnet" "frontend_subnet1" {
   depends_on = [module.azurerm_subnet_parent]
   name                 = "frontend_subnet_todoapp"
   virtual_network_name = "vnet-todoapp"
-  resource_group_name  = "rg-todoapp"
+  resource_group_name  = "rg-todoapp2"
 }
 
 data "azurerm_subnet" "backend_subnet1" {
   depends_on = [module.azurerm_backendsubnet_parent]
   name                 = "backend_subnet_todoapp"
   virtual_network_name = "vnet-todoapp"
-  resource_group_name  = "rg-todoapp"
+  resource_group_name  = "rg-todoapp2"
 }
 
 data "azurerm_public_ip" "pip13" {
   depends_on = [module.frontend_public_pip]
   name                = "public_pip1"
-  resource_group_name = "rg-todoapp"
+  resource_group_name = "rg-todoapp2"
 }
 data "azurerm_mssql_server" "datasql" {
   depends_on = [module.sql_server]
   name                = "sqlserver15674"
-  resource_group_name = "rg-todoapp"
+  resource_group_name = "rg-todoapp2"
 }
 
